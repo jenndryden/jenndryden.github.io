@@ -182,7 +182,7 @@ pre {
     font-size: 26px;
     color: #90D4C5;
     line-height: 1.5em;
-    position: relative;
+    position: fixed;
     z-index: 12;
     letter-spacing: 4px;
     margin-bottom: 120px;
@@ -202,6 +202,7 @@ pre {
     clear: both;
     margin-bottom: 40px;
     width: 100%;
+    margin-top: 150px;
 }
 .site-tagline p {
     color: #2c2c2c;
@@ -1340,6 +1341,7 @@ nav[role="navigation"] {
     position: inherit;
     width: 60%;
     padding-bottom: 15%;
+    padding-top: 100px;
     display: block;
 margin: auto;
 }
@@ -1352,7 +1354,8 @@ path {
     animation: animate 3s;
 }
 
-@keyframes animate {
+
+    @keyframes animate {
     0% {
         opacity: 0%;
         fill: none;
@@ -1374,4 +1377,178 @@ path {
         fill: #90D4C5;
         stroke-dashoffset: 0;
     }
+}
+
+
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: white;
+}
+
+.square {
+    position: relative;
+    margin: 0 10px;
+    height: 250px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    display: inline-block;
+   margin:2%;
+}
+
+.square span:nth-child(1) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 2px solid#2c2c2c;
+    border-radius: 32% 58% 69% 43% / 48% 32% 59% 55%;
+    transition: 0.5s;
+    animation: animate 6s linear infinite;
+}
+
+.linkedin:hover span:nth-child(1) {
+    border: none;
+    background: #f07e6e;
+}
+
+.resume:hover span:nth-child(1) {
+    border: none;
+    background: #b19cd9;
+}
+
+.twitter:hover span:nth-child(1) {
+    border: none;
+    background: #84cdfa;
+}
+
+.github:hover span:nth-child(1) {
+    border: none;
+    background: #5ad1cd;
+}
+
+.square span:nth-child(2) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 2px solid#2c2c2c;
+    border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
+    transition: 0.5s;
+    animation: animate 4s linear infinite;
+}
+
+.linkedin:hover span:nth-child(2) {
+    border: none;
+    background: #f07e6e;
+}
+
+.resume:hover span:nth-child(2) {
+    border: none;
+    background: #b19cd9;
+}
+
+.twitter:hover span:nth-child(2) {
+    border: none;
+    background: #84cdfa;
+}
+
+.github:hover span:nth-child(2) {
+    border: none;
+    background: #5ad1cd;
+}
+
+.square span:nth-child(3) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 2px solid#2c2c2c;
+    border-radius: 31% 45% 74% 35% / 38% 56% 51% 87%;
+    transition: 0.5s;
+    animation: animate2 10s linear infinite;
+}
+
+.linkedin:hover span:nth-child(3) {
+    border: none;
+    background: #f07e6e;
+}
+.resume:hover span:nth-child(3) {
+    border: none;
+    background: #b19cd9;
+}
+
+.twitter:hover span:nth-child(3) {
+    border: none;
+    background: #84cdfa;
+}
+
+.github:hover span:nth-child(3) {
+    border: none;
+    background: #5ad1cd;
+}
+
+.content {
+    position: relative;
+    padding: 60px 40px;
+    color: #2c2c2c;
+    text-align: center;
+    transition: 0.5s;
+    z-index: 1000;
+}
+
+.content a {
+    position: relative;
+    display: inline-block;
+    justify-content: center;
+    margin: auto;
+    margin-top: 10px;
+    border: 2px #2c2c2c;
+    padding-bottom: 300px;
+    padding: 6px 18px;
+    text-decoration: none;
+    color:  #2c2c2c;
+    font-weight: 600;
+    border-radius: 73% 27% 44% 56% / 49% 44% 56% 51%;
+}
+
+.content a:hover {
+    background: white;
+}
+
+
+@keyframes animate3 {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes animate2 {
+    0% {
+        transform: rotate(360deg);
+    }
+    100% {
+        transform: rotate(0deg);
+    }
+}
+
+.circles {
+    display: flex;
+    justify-content: center;
 }
