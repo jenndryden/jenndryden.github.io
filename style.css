@@ -1347,5 +1347,31 @@ margin: auto;
 path {
     stroke: #90D4C5;
     fill: #90D4C5;
-    stroke-dasharray: ;
+    stroke-dasharray: 1300;
+    opacity: 10;
+    animation: animate 3s;
+}
+
+@keyframes animate {
+    0% {
+        opacity: 0%;
+        fill: none;
+        stroke-dashoffset: 1300;
+    }
+
+    30% {
+        opacity: 10;
+        fill:none;
+        stroke-dashoffset: 1300;
+    }
+
+    90% {
+        opacity: 10;
+        fill: #90D4C5;
+    }
+    100% {
+        opacity: 10;
+        fill: #90D4C5;
+        stroke-dashoffset: 0;
+    }
 }
