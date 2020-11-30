@@ -248,6 +248,8 @@ pre {
 .languages ul li.active a {
     color: #2c2c2c;
 }
+
+
 /*=================================*/
 /* Navigation Styles
 /*=================================*/
@@ -1456,84 +1458,31 @@ path {
     background: #dd4b39;
   }
 
-  
-  .span {
-      font-family: 'futura pt', Helvetica, sans-serif;
-      font-size: 1.8em;
-      color: #999;
-      font-weight: 300;
-      font-style: normal;
-      text-align: center;
-      line-height: 1em;
-      margin-top: 0px;
+
+  .paint html, body {
+    padding: 0px;
+    margin: 0px;
+    display: block; 
   }
   
-  #canvas {
-      background: #000;
+  .paint #info {
+    margin: auto;
+    position: relative;
+    z-index: 2;
+    color: #ffffff;
+    font-family: sans-serif;
+    pointer-events: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
   
-  #canvas:active {
-      background: #fff;
-      transition: all 3s ease;
-      -webkit-transition: all 3s ease;
+  .paint canvas {
+    z-index: 1;
+    position: flex;
+    top: 0px;
+    left: 0px;
   }
-  
-  .copy {
-      position: absolute;
-      top: 42%;
-      left: 1%;
-      width: 100%;
-      text-align: center;
-      pointer-events: none;
-      -webkit-touch-callout: none; 
-      -webkit-user-select: none; 
-       -khtml-user-select: none; 
-         -moz-user-select: none; 
-          -ms-user-select: none; 
-              user-select: none; 
-  }
-      
-  p {
-      font-family: 'futura pt', Helvetica, sans-serif;
-      font-size: 1.8em;
-      color: #999;
-      font-weight: 300;
-      font-style: normal;
-      text-align: center;
-      line-height: 1em;
-      margin-top: 0px;
-     
-  }
-    body:active p  {
-       transition: 2s ease;
-       -webkit-transition: 2s ease;
-       line-height: 1.5em;
-       -webkit-transform: translateY(-60px);
-       transform: translateY(-60px);
-       color: #222;
-    }
-    body:active span  {
-       transition: 2s ease;
-       -webkit-transition: 2s ease;
-       line-height: 1.5em;
-       -webkit-transform: translateY(-60px);
-       transform: translateY(-60px);
-       color: #222;
-       font-weight: 500; 
-  
-    }
-  
-    body:active h1 {
-      color: rgba(255,255,255,0);
-      transition: all 2s ease;
-      -webkit-transition: all 2s ease;
-      -webkit-transform: translateY(-100px);
-      transform: translateY(-100px);
-    }
-    body:active h2 {
-      color: rgba(255,255,255,0);
-      transition: all 2s ease;
-      -webkit-transition: all 2s ease;
-      -webkit-transform: translateY(-100px);
-      transform: translateY(-100px);
-    }

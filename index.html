@@ -15,7 +15,6 @@
     <link href='https://fonts.googleapis.com/css?family=Quicksand:300,400,700' rel='stylesheet' type='text/css'>
 
      <script src="scripts/modernizr.js"></script>
-     <script src="confetti.js"></script>
      <meta charset="UTF-8">
 
 </head>
@@ -288,22 +287,65 @@ viewBox="0 0 503.7 328.5" style="enable-background:new 0 0 503.7 328.5;" xml:spa
 <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous">
 </script>
 
+<div class="paint">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+    <link rel="stylesheet" href="./style.css">
+    
+    </head>
+    <!-- partial:index.partial.html -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            var slider = new gooSlider('body');
+            
+            
+            var l1,l2;
+            $('body').click(function(){
+                var c = 'hsla('+ (Math.floor(Math.random()*7) * 50) +',56%,68%,1)';
+                if(c != l1 && c != l2){
+                    slider.wave(c, function(){});
+                    l2 = l1;
+                    l1 = c;
+                } else {
+                    $('body').click();
+                }
+            });
+            
+            var count = 5,
+                cur = 0;
+            function start(){
+                slider.wave('hsla('+ (Math.floor(Math.random()*7) * 50) +',82%,64%,1)', function(){});
+                cur++;
+                if(cur<count){
+                    setTimeout(function(){
+                        start();
+                    }, 1500)
+                }
+            }
+            start();
+        });
+    </script>
+    
 
-<canvas id="canvas" style-type="text/css" ></canvas>
+      <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script>
+    <script src='https://codepen.io/darrylhuffman/pen/zogYQW.js'></script><script  src="./script.js"></script>
+
+</div>
 
 <div class="circles">
     <ul>
       <li>
-        <a href="#">
+        <a href="https://github.com/jenndryden">
           <i class="fab fa-github icon"></i>    </a>
       </li>
       <li>
         <a href="#"><i class="fab fa-twitter icon"></i></a>
       </li>
       <li>
-        <a href="#"><i class="fab fa-linkedin-in icon"></i></a></li>
+        <a href="https://www.linkedin.com/in/jennifer-dryden/"><i class="fab fa-linkedin-in icon"></i></a></li>
       <li>
-        <a href="#"><i class="fas fa-file icon"></i></a></li>
+        <a href="Jennifer Dryden Resume 2020.pdf"><i class="fas fa-file icon"></i></a></li>
     </ul>
     </div>
 
