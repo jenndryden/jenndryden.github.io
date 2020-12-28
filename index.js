@@ -4,7 +4,7 @@ function getLength(x0, y0, x1, y1) {
     const x = x1 - x0;
     const y = y1 - y0;
     return Math.sqrt(x * x + y * y);
-}
+}  
 
 function getDegAngle(x0, y0, x1, y1) {
     const y = y1 - y0;
@@ -25,7 +25,7 @@ class ConfettiCannon {
         this.ctx = this.canvas.getContext('2d');
         this.ctx.scale(this.dpr, this.dpr);
 
-        // add confetti here
+        // add confetti here 
         this.confettiSpriteIds = [];
         this.confettiSprites = {};
         
