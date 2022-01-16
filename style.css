@@ -582,7 +582,7 @@ pre {
     vertical-align: middle;
 }
 .thumbnail-title {
-    color: #2c2c2c;
+    color: #eee;
     font-family: 'Righteous',helvetica,sans-serif;
     font-size: 21px;
     margin: 0 auto 10px auto;
@@ -594,7 +594,7 @@ pre {
     word-wrap: break-word;
 }
 .thumbnail-description {
-    color: #2c2c2c;
+    color: #eee;
     font-family: 'quicksand', Arial, sans-serif;
     font-size: 16px;
     margin: 0 auto;
@@ -629,7 +629,7 @@ div.image img { width: 100%; }
 .project-meta {
     font-family: 'quicksand', Arial, sans-serif;
     font-size: 14px;
-    color: #BBBBBB;
+    color: white;
     margin-top: 28px;
 }
 .project-meta > span::before {
@@ -647,6 +647,9 @@ div.image img { width: 100%; }
 .project-meta .tags a { margin-left: 10px; }
 .project-meta .tags a:first-child { margin-left: 0; }
 
+.projects-feed .thumb, .projects-feed .project-content-container {
+    background-color: #2c2c2c;
+}
 /*===== Paginations =====*/
 nav[role="navigation"] {
   text-align: center;
@@ -1153,6 +1156,7 @@ nav[role="navigation"] {
     /*===== Projects =====*/
     .thumbnail-title {
         font-size: 28px;
+        color:#eee;
     }
     .is_page .projects-feed { margin-top: 150px; }
     .projects-feed .project { float: left; }
