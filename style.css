@@ -182,13 +182,13 @@ pre {
     font-size: 26px;
     color: #90D4C5;
     line-height: 1.5em;
-    position: fixed;
+    position: relative;
     z-index: 12;
     letter-spacing: 4px;
     margin-bottom: 120px;
 }
 .site-title a {
-    position: fixed;
+    position: relative;
 }
 .site-title a,
 .site-title a:visited { color: #90D4C5; }
