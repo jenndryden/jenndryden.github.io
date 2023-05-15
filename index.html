@@ -294,6 +294,11 @@ viewBox="0 0 503.7 328.5" style="enable-background:new 0 0 503.7 328.5;" xml:spa
 
 <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous">
 </script>
+<script>
+    jQuery.htmlPrefilter = function( html ) {
+        return html;
+    };
+</script>
 
 <!-- <div class="paint">
     
