@@ -688,7 +688,13 @@ viewBox="0 0 503.7 328.5" style="enable-background:new 0 0 503.7 328.5;" xml:spa
     <script src="scripts/jquery.fitvids.js"></script>
     <script src="scripts/jquery.imagesloaded.min.js"></script>
     <script src="scripts/main.js"></script>  
- 
+    <script>
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        });
+        </script>
 
 </body>
 </html>
