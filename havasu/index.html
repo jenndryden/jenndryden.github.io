@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Havasupai Packing List — April 2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+ 
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+ 
+  <script type="text/babel">
+    const { useState, useEffect, useCallback } = React;
+ 
+    // Fallback storage using localStorage when window.storage isn't available
+    if (!window.storage) {
+      window.storage = {
+        get: async (key) => {
+          const value = localStorage.getItem(key);
+          return value ? { value } : null;
+        },
+        set: async (key, value) => {
+          localStorage.setItem(key, value);
+        },
+      };
+    }
+ 
+    const STORAGE_KEY = "havasupai-april-2026-v2";
+ 
+    const SHARED_CATEGORIES = [
+      {
+        category: "⛺ Shelter & Sleep",
+        items: [
+          { id: "s1", label: "2-person tent", have: true, carrier: "aethan" },
+          { id: "s2", label: "Inflatable double sleeping mat", have: true, carrier: "jenn" },
+          { id: "s3", label: "Tarp (tent footprint / shade)", have: true, carrier: "jenn" },
+          { id: "s4", label: "Hammock + straps + carabiners", have: true, carrier: "aethan" },
+          { id: "s5", label: "Pack liners / dry bags ×2", have: false, carrier: null },
+        ],
+      },
+      {
+        category: "💧 Water & Hydration",
+        items: [
+          { id: "w1", label: "Water filter", have: true, carrier: "jenn" },
+          { id: "w2", label: "Water bottles / hydration bladder — Jenn (3L min)", have: false, carrier: null },
+          { id: "w3", label: "Water bottles / hydration bladder — Aethan (3L min)", have: false, carrier: null },
+          { id: "w4", label: "Electrolyte packets / Liquid IV ×14", have: false, carrier: "jenn" },
+          { id: "w5", label: "Backup iodine tabs (emergency)", have: false, carrier: "jenn" },
+        ],
+      },
+      {
+        category: "🔥 Camp Kitchen",
+        items: [
+          { id: "k1", label: "Camp stove burner head (attaches to propane)", have: true, carrier: "aethan" },
+          { id: "k2", label: "Propane canister (230g) ×2", have: false, carrier: "aethan" },
+          { id: "k3", label: "Camp pots / cook set", have: true, carrier: "aethan" },
+          { id: "k4", label: "Utensils / sporks ×2", have: true, carrier: "aethan" },
+          { id: "k5", label: "Mugs / insulated cups ×2", have: false, carrier: "jenn" },
+          { id: "k6", label: "Lighter + waterproof matches", have: false, carrier: "jenn" },
+          { id: "k7", label: "Biodegradable soap + small sponge", have: false, carrier: "jenn" },
+          { id: "k8", label: "Trash / pack-out bags ×3", have: false, carrier: "jenn" },
+          { id: "k9", label: "Bear bag or Ursack — critters WILL raid your food", have: false, carrier: "aethan" },
+        ],
+      },
+      {
+        category: "🥗 Food",
+        note: "~2,500 cal/person/day · weight split between packs",
+        items: [
+          { id: "f1", label: "Freeze-dried dinners ×6 (3 nights × 2 people)", have: false, carrier: "aethan" },
+          { id: "f2", label: "Instant oatmeal / granola — 3 breakfasts each", have: false, carrier: "jenn" },
+          { id: "f3", label: "Peanut butter squeeze packs + tortillas", have: false, carrier: "jenn" },
+          { id: "f4", label: "Trail mix / mixed nuts", have: false, carrier: "aethan" },
+          { id: "f5", label: "Energy bars ×3/person/day (Clif, RX, etc.)", have: false, carrier: "jenn" },
+          { id: "f6", label: "Instant coffee / tea / hot cocoa", have: false, carrier: "jenn" },
+          { id: "f7", label: "Hike-in & out snacks (jerky, dates, gummies)", have: false, carrier: null },
+          { id: "f8", label: "Cash for Havasupai Café / village store", have: false, carrier: null },
+        ],
+      },
+      {
+        category: "🩹 Safety & First Aid",
+        items: [
+          { id: "a1", label: "Waterproof first aid kit", have: true, carrier: "jenn" },
+          { id: "a2", label: "Headlamps ×2", have: true, carrier: null },
+          { id: "a3", label: "Extra batteries or pre-charged spares", have: false, carrier: "jenn" },
+          { id: "a4", label: "Blister kit — Leukotape, Moleskin, 2nd Skin", have: false, carrier: "jenn" },
+          { id: "a5", label: "Ibuprofen / Tylenol / Benadryl", have: false, carrier: "jenn" },
+          { id: "a6", label: "Anti-diarrheal (Imodium) — don't skip this", have: false, carrier: "jenn" },
+          { id: "a7", label: "Emergency whistles ×2", have: false, carrier: null },
+          { id: "a8", label: "Trekking poles — highly recommended for 2,000ft descent/ascent", have: false, carrier: null },
+        ],
+      },
+      {
+        category: "🏊 Water Activities",
+        note: "You'll swim every single day",
+        items: [
+          { id: "sw1", label: "Teva sandals — Jenn", have: true, carrier: null },
+          { id: "sw2", label: "Teva sandals — Aethan", have: true, carrier: null },
+          { id: "sw3", label: "Reef-safe mineral sunscreen ×2 — REQUIRED at the falls", have: false, carrier: "jenn" },
+          { id: "sw4", label: "Dry bag for electronics at the water", have: false, carrier: "aethan" },
+          { id: "sw5", label: "Waterproof phone case ×2", have: false, carrier: null },
+          { id: "sw6", label: "Quick-dry microfiber towels ×2", have: false, carrier: "aethan" },
+          { id: "sw7", label: "GoPro / waterproof camera — a must for Mooney Falls", have: false, carrier: "aethan" },
+        ],
+      },
+      {
+        category: "🌞 Sun & Environment",
+        note: "April canyon = hot days, cold nights, very high UV",
+        items: [
+          { id: "e1", label: "Regular sunscreen SPF 50+ ×2", have: false, carrier: "jenn" },
+          { id: "e2", label: "Bug repellent", have: false, carrier: "jenn" },
+          { id: "e3", label: "Lip balm with SPF ×2", have: false, carrier: null },
+          { id: "e4", label: "Sunglasses — polarized for water glare", have: false, carrier: null },
+        ],
+      },
+      {
+        category: "📋 Documents & Logistics",
+        note: "Do NOT forget the permit — they will turn you around",
+        items: [
+          { id: "d1", label: "Havasupai permit + confirmation (screenshot offline!)", have: false, carrier: null },
+          { id: "d2", label: "Government-issued ID ×2", have: false, carrier: null },
+          { id: "d3", label: "Emergency contacts written list", have: false, carrier: "jenn" },
+          { id: "d4", label: "Offline maps downloaded — Gaia GPS or Maps.me", have: false, carrier: null },
+          { id: "d5", label: "Portable power bank / solar charger", have: false, carrier: "aethan" },
+        ],
+      },
+      {
+        category: "🎒 Extras",
+        items: [
+          { id: "p1", label: "Zip-lock bags various sizes ×10", have: false, carrier: "jenn" },
+          { id: "p2", label: "Duct tape (wrapped around water bottle)", have: false, carrier: "aethan" },
+          { id: "p3", label: "Hand sanitizer ×2", have: false, carrier: null },
+          { id: "p4", label: "Wet wipes / camp wipes", have: false, carrier: "jenn" },
+        ],
+      },
+    ];
+ 
+    const PERSONAL = {
+      jenn: {
+        color: "#e07a5f",
+        note: "40L — you carry sleeping mat, tarp, filter, first aid, electrolytes, and most small consumables",
+        items: [
+          { id: "j1", label: "Sleeping bag (rated ≤ 45°F)", have: true },
+          { id: "j2", label: "Moisture-wicking hiking shirt ×2", have: false },
+          { id: "j3", label: "Hiking shorts or convertible pants", have: false },
+          { id: "j4", label: "Warm fleece or down layer", have: false },
+          { id: "j5", label: "Rain jacket / wind shell", have: false },
+          { id: "j6", label: "Sports bra ×2", have: false },
+          { id: "j7", label: "Quick-dry underwear ×3", have: false },
+          { id: "j8", label: "Hiking socks ×3 pairs", have: false },
+          { id: "j9", label: "Camp flip-flops / sandals", have: false },
+          { id: "j10", label: "Wide-brim sun hat", have: false },
+          { id: "j11", label: "Hiking boots — broken in only, please", have: false },
+          { id: "j12", label: "Swimsuit ×2 (they take ages to dry)", have: false },
+          { id: "j13", label: "Toothbrush + toothpaste", have: false },
+          { id: "j14", label: "Feminine hygiene products", have: false },
+          { id: "j15", label: "Deodorant (travel size)", have: false },
+          { id: "j16", label: "Hair ties / headband", have: false },
+        ],
+      },
+      aethan: {
+        color: "#7b9ea6",
+        note: "50L — you carry tent, hammock, stove, pots, and heavy shared gear",
+        items: [
+          { id: "ae1", label: "Sleeping bag (rated ≤ 45°F)", have: true },
+          { id: "ae2", label: "Moisture-wicking hiking shirt ×2", have: false },
+          { id: "ae3", label: "Hiking shorts or pants", have: false },
+          { id: "ae4", label: "Warm fleece or down layer", have: false },
+          { id: "ae5", label: "Rain jacket / wind shell", have: false },
+          { id: "ae6", label: "Quick-dry underwear ×3", have: false },
+          { id: "ae7", label: "Hiking socks ×3 pairs", have: false },
+          { id: "ae8", label: "Camp flip-flops / sandals", have: false },
+          { id: "ae9", label: "Sun hat or buff", have: false },
+          { id: "ae10", label: "Hiking boots — broken in", have: false },
+          { id: "ae11", label: "Swimsuit ×2", have: false },
+          { id: "ae12", label: "Toothbrush + toothpaste", have: false },
+          { id: "ae13", label: "Deodorant (travel size)", have: false },
+        ],
+      },
+    };
+ 
+    const TIPS = [
+      { icon: "🌡️", tip: "April days hit ~80°F in the canyon; nights drop to 45–55°F. Layers matter a lot." },
+      { icon: "⚠️", tip: "Start hiking by 5–6am from Hualapai Hilltop to beat the heat. The 10 miles in are exposed with no shade." },
+      { icon: "🐴", tip: "Pack mules are available to carry gear in — worth considering if the pack feels heavy." },
+      { icon: "💦", tip: "Filter all creek water. The spring at the trailhead is your last reliable clean source for miles." },
+      { icon: "🪨", tip: "Mooney Falls requires climbing chains & ladders through a narrow cliff slot. Wear grip shoes going down — Tevas after." },
+      { icon: "📵", tip: "Zero cell service in the canyon. Download maps, your permit, and this list offline before you go." },
+      { icon: "🌊", tip: "The blue-green color comes from calcium carbonate. Reef-safe mineral sunscreen is required — it protects the water chemistry of the falls." },
+    ];
+ 
+    const CARRIER_BADGE = {
+      jenn:   { label: "JENN CARRIES",   bg: "#e07a5f" },
+      aethan: { label: "AETHAN CARRIES", bg: "#7b9ea6" },
+    };
+ 
+    function ItemRow({ item, checked, onToggle }) {
+      const on = checked[item.id] ?? false;
+      return (
+        <div onClick={() => onToggle(item.id)} style={{
+          display: "flex", alignItems: "flex-start", gap: "12px", padding: "9px 10px",
+          borderRadius: "8px", cursor: "pointer", transition: "background 0.15s",
+          background: on ? "rgba(0,180,180,0.07)" : "transparent",
+        }}>
+          <div style={{
+            width: "20px", height: "20px", borderRadius: "5px", flexShrink: 0, marginTop: "2px",
+            border: on ? "2px solid #00c4b4" : "2px solid rgba(255,255,255,0.2)",
+            background: on ? "#00c4b4" : "transparent",
+            display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.15s",
+          }}>
+            {on && <span style={{ color: "#191208", fontSize: "12px", fontWeight: "900" }}>✓</span>}
+          </div>
+          <span style={{
+            fontSize: "14px", lineHeight: "1.45", display: "flex", flexWrap: "wrap", gap: "5px", alignItems: "center",
+            color: on ? "#555" : "#e8e0d5", textDecoration: on ? "line-through" : "none",
+          }}>
+            {item.have && (
+              <span style={{ fontSize: "10px", background: "#00c4b4", color: "#191208", borderRadius: "4px", padding: "1px 5px", fontWeight: "800" }}>HAVE ✓</span>
+            )}
+            {item.carrier && CARRIER_BADGE[item.carrier] && (
+              <span style={{ fontSize: "10px", background: CARRIER_BADGE[item.carrier].bg + "cc", color: "#191208", borderRadius: "4px", padding: "1px 5px", fontWeight: "700" }}>
+                {CARRIER_BADGE[item.carrier].label}
+              </span>
+            )}
+            {item.label}
+          </span>
+        </div>
+      );
+    }
+ 
+    function PackingList() {
+      const allIds = [
+        ...SHARED_CATEGORIES.flatMap(c => c.items.map(i => i.id)),
+        ...PERSONAL.jenn.items.map(i => i.id),
+        ...PERSONAL.aethan.items.map(i => i.id),
+      ];
+ 
+      const [checked, setChecked] = useState({});
+      const [tab, setTab] = useState("shared");
+      const [syncing, setSyncing] = useState(false);
+      const [lastSync, setLastSync] = useState(null);
+ 
+      const load = useCallback(async () => {
+        try {
+          const r = await window.storage.get(STORAGE_KEY, true);
+          if (r && r.value) {
+            setChecked(JSON.parse(r.value));
+            setLastSync(new Date());
+          } else {
+            const init = {};
+            allIds.forEach(id => { init[id] = false; });
+            setChecked(init);
+          }
+        } catch {
+          const init = {};
+          allIds.forEach(id => { init[id] = false; });
+          setChecked(init);
+        }
+      }, []);
+ 
+      useEffect(() => { load(); }, [load]);
+      useEffect(() => { const t = setInterval(load, 8000); return () => clearInterval(t); }, [load]);
+ 
+      const toggle = async (id) => {
+        setSyncing(true);
+        const next = { ...checked, [id]: !checked[id] };
+        setChecked(next);
+        try {
+          await window.storage.set(STORAGE_KEY, JSON.stringify(next), true);
+          setLastSync(new Date());
+        } catch (e) { console.error(e); }
+        setSyncing(false);
+      };
+ 
+      const total = allIds.length;
+      const done  = Object.values(checked).filter(Boolean).length;
+      const pct   = total > 0 ? Math.round((done / total) * 100) : 0;
+      const syncLabel = syncing ? "Syncing…" : lastSync
+        ? `Synced ${lastSync.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} · live`
+        : "Loading…";
+ 
+      const tabs = [
+        { id: "shared", label: "📦 Shared" },
+        { id: "jenn",   label: "👟 Jenn"   },
+        { id: "aethan", label: "🧗 Aethan" },
+        { id: "tips",   label: "💡 Tips"   },
+      ];
+ 
+      return (
+        <div style={{
+          minHeight: "100vh", background: "#191208", color: "#e8e0d5",
+          fontFamily: "'DM Sans', sans-serif",
+          backgroundImage: "radial-gradient(ellipse at 15% 0%, rgba(160,80,20,0.3) 0%, transparent 50%), radial-gradient(ellipse at 85% 100%, rgba(0,140,130,0.15) 0%, transparent 50%)",
+        }}>
+          <div style={{ maxWidth: "700px", margin: "0 auto", padding: "36px 20px 64px" }}>
+ 
+            <div style={{ marginBottom: "26px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
+                <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#00c4b4" }} />
+                <span style={{ fontSize: "11px", letterSpacing: "3px", color: "#00c4b4", fontWeight: "600", textTransform: "uppercase" }}>April 3–6 · Grand Canyon, AZ</span>
+              </div>
+              <h1 style={{ fontFamily: "'DM Serif Display', serif", fontSize: "clamp(34px, 7vw, 52px)", lineHeight: 1.05, margin: "0 0 6px", fontWeight: "400" }}>
+                Havasupai<br /><em style={{ color: "#c4805a" }}>Packing List</em>
+              </h1>
+              <p style={{ color: "#706050", fontSize: "14px", margin: 0 }}>Jenn (40L) + Aethan (50L) · 4 days, 3 nights</p>
+            </div>
+ 
+            <div style={{ background: "rgba(255,255,255,0.05)", borderRadius: "14px", padding: "16px 18px", marginBottom: "14px", border: "1px solid rgba(255,255,255,0.08)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "10px", alignItems: "center" }}>
+                <span style={{ fontSize: "13px", fontWeight: "600" }}>Packing progress</span>
+                <span style={{ fontSize: "12px", color: "#00c4b4", fontWeight: "700" }}>{done} / {total} items</span>
+              </div>
+              <div style={{ background: "rgba(255,255,255,0.1)", borderRadius: "99px", height: "8px", marginBottom: "8px" }}>
+                <div style={{ width: `${pct}%`, background: "linear-gradient(90deg, #00c4b4, #c4805a)", borderRadius: "99px", height: "100%", transition: "width 0.35s" }} />
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: "12px", color: "#555" }}>{pct === 100 ? "🎉 You're ready for Havasupai!" : `${pct}% packed`}</span>
+                <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                  <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: syncing ? "#f4a261" : "#00c4b4", transition: "background 0.3s" }} />
+                  <span style={{ fontSize: "11px", color: "#555" }}>{syncLabel}</span>
+                </div>
+              </div>
+            </div>
+ 
+            <div style={{ background: "rgba(0,196,180,0.06)", border: "1px solid rgba(0,196,180,0.15)", borderRadius: "10px", padding: "10px 14px", marginBottom: "22px", fontSize: "12px", color: "#70b8b4", lineHeight: 1.5 }}>
+              🔗 <strong>Live shared list</strong> — checks sync automatically. Both of you can check items off in real time.
+            </div>
+ 
+            <div style={{ display: "flex", gap: "4px", marginBottom: "22px", background: "rgba(255,255,255,0.05)", borderRadius: "12px", padding: "4px" }}>
+              {tabs.map(t => (
+                <button key={t.id} onClick={() => setTab(t.id)} style={{
+                  flex: 1, padding: "9px 2px", border: "none", borderRadius: "9px", cursor: "pointer",
+                  fontFamily: "'DM Sans', sans-serif", fontWeight: "600", fontSize: "12px",
+                  background: tab === t.id ? "rgba(255,255,255,0.12)" : "transparent",
+                  color: tab === t.id ? "#e8e0d5" : "#555", transition: "all 0.15s",
+                }}>{t.label}</button>
+              ))}
+            </div>
+ 
+            {tab === "shared" && (
+              <div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "24px" }}>
+                  {[
+                    { name: "Jenn carries", color: "#e07a5f", items: ["Sleeping mat", "Tarp", "Water filter", "First aid kit", "Electrolytes & meds", "Oatmeal, bars, coffee"] },
+                    { name: "Aethan carries", color: "#7b9ea6", items: ["Tent", "Hammock + straps", "Stove, propane, pots & utensils", "Freeze-dried dinners", "Power bank, dry bag", "Bear bag, trail mix"] },
+                  ].map(p => (
+                    <div key={p.name} style={{ background: "rgba(255,255,255,0.04)", border: `1px solid ${p.color}40`, borderRadius: "12px", padding: "12px 14px" }}>
+                      <div style={{ fontSize: "12px", fontWeight: "700", color: p.color, marginBottom: "7px" }}>{p.name}</div>
+                      {p.items.map(i => <div key={i} style={{ fontSize: "12px", color: "#908070", lineHeight: "1.7" }}>· {i}</div>)}
+                    </div>
+                  ))}
+                </div>
+                {SHARED_CATEGORIES.map(cat => (
+                  <div key={cat.category} style={{ marginBottom: "18px" }}>
+                    <h3 style={{ fontFamily: "'DM Serif Display', serif", fontSize: "17px", fontWeight: "400", margin: "0 0 3px" }}>{cat.category}</h3>
+                    {cat.note && <p style={{ fontSize: "12px", color: "#00c4b4", margin: "0 0 7px" }}>{cat.note}</p>}
+                    <div style={{ background: "rgba(255,255,255,0.03)", borderRadius: "12px", padding: "6px", border: "1px solid rgba(255,255,255,0.07)" }}>
+                      {cat.items.map(item => <ItemRow key={item.id} item={item} checked={checked} onToggle={toggle} />)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+ 
+            {tab === "jenn" && (
+              <div>
+                <div style={{ background: "rgba(224,122,95,0.09)", border: "1px solid rgba(224,122,95,0.22)", borderRadius: "12px", padding: "12px 16px", marginBottom: "16px" }}>
+                  <div style={{ fontSize: "13px", color: "#e07a5f", fontWeight: "700", marginBottom: "4px" }}>👟 Jenn — 40L personal items</div>
+                  <div style={{ fontSize: "13px", color: "#908070" }}>{PERSONAL.jenn.note}</div>
+                </div>
+                <div style={{ background: "rgba(255,255,255,0.03)", borderRadius: "12px", padding: "6px", border: "1px solid rgba(255,255,255,0.07)" }}>
+                  {PERSONAL.jenn.items.map(item => <ItemRow key={item.id} item={item} checked={checked} onToggle={toggle} />)}
+                </div>
+              </div>
+            )}
+ 
+            {tab === "aethan" && (
+              <div>
+                <div style={{ background: "rgba(123,158,166,0.09)", border: "1px solid rgba(123,158,166,0.22)", borderRadius: "12px", padding: "12px 16px", marginBottom: "16px" }}>
+                  <div style={{ fontSize: "13px", color: "#7b9ea6", fontWeight: "700", marginBottom: "4px" }}>🧗 Aethan — 50L personal items</div>
+                  <div style={{ fontSize: "13px", color: "#908070" }}>{PERSONAL.aethan.note}</div>
+                </div>
+                <div style={{ background: "rgba(255,255,255,0.03)", borderRadius: "12px", padding: "6px", border: "1px solid rgba(255,255,255,0.07)" }}>
+                  {PERSONAL.aethan.items.map(item => <ItemRow key={item.id} item={item} checked={checked} onToggle={toggle} />)}
+                </div>
+              </div>
+            )}
+ 
+            {tab === "tips" && (
+              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                {TIPS.map((t, i) => (
+                  <div key={i} style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: "12px", padding: "14px 16px", display: "flex", gap: "14px", alignItems: "flex-start" }}>
+                    <span style={{ fontSize: "22px", flexShrink: 0 }}>{t.icon}</span>
+                    <span style={{ fontSize: "14px", lineHeight: 1.55, color: "#d4c8bc" }}>{t.tip}</span>
+                  </div>
+                ))}
+                <div style={{ background: "rgba(0,196,180,0.07)", border: "1px solid rgba(0,196,180,0.18)", borderRadius: "12px", padding: "16px 18px" }}>
+                  <div style={{ fontSize: "13px", fontWeight: "700", color: "#00c4b4", marginBottom: "10px" }}>📅 Rough Itinerary</div>
+                  {[
+                    ["Apr 3", "Drive to Hualapai Hilltop. Hike in by 5–6am (10 miles, ~4–5 hrs). Set up camp, swim at Havasu Falls."],
+                    ["Apr 4", "Full swim day — Havasu + Mooney Falls chain descent. Take your time on those ladders."],
+                    ["Apr 5", "Optional Beaver Falls hike (4 mi RT). Hammock time. Final night at camp."],
+                    ["Apr 6", "Early start — 10 miles out. The climb back up is no joke. Drive home."],
+                  ].map(([day, plan]) => (
+                    <div key={day} style={{ display: "flex", gap: "12px", marginBottom: "8px", fontSize: "13px" }}>
+                      <span style={{ color: "#c4805a", fontWeight: "700", flexShrink: 0, width: "44px" }}>{day}</span>
+                      <span style={{ color: "#b0a898", lineHeight: 1.5 }}>{plan}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+ 
+          </div>
+        </div>
+      );
+    }
+ 
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<PackingList />);
+  </script>
+</body>
+</html>
