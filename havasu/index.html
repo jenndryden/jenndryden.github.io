@@ -17,23 +17,37 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
  
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <script type="text/babel">
     const { useState, useEffect, useCallback } = React;
  
-    // Fallback storage using localStorage when window.storage isn't available
-    if (!window.storage) {
-      window.storage = {
-        get: async (key) => {
-          const value = localStorage.getItem(key);
-          return value ? { value } : null;
-        },
-        set: async (key, value) => {
-          localStorage.setItem(key, value);
-        },
-      };
-    }
- 
-    const STORAGE_KEY = "havasupai-april-2026-v2";
+ // 1. Initialize Firebase (Replace with your actual keys from Step 3!)
+ const firebaseConfig = {
+  apiKey: "AIzaSyDA7n1NtwBjz0PcvNvVIvNKIp3WsYGYwOk",
+  authDomain: "havasupai-list.firebaseapp.com",
+  databaseURL: "https://havasupai-list-default-rtdb.firebaseio.com",
+  projectId: "havasupai-list",
+  storageBucket: "havasupai-list.firebasestorage.app",
+  messagingSenderId: "247973813881",
+  appId: "1:247973813881:web:5f24db59899699388f7ea8"
+};
+
+ firebase.initializeApp(firebaseConfig);
+ const db = firebase.database();
+
+ // 2. Overwrite window.storage to sync with Firebase instead of the phone
+ window.storage = {
+   get: async (key) => {
+     const snapshot = await db.ref(key).once('value');
+     return snapshot.exists() ? { value: JSON.stringify(snapshot.val()) } : null;
+   },
+   set: async (key, value) => {
+     await db.ref(key).set(JSON.parse(value));
+   },
+ };
+
+ const STORAGE_KEY = "havasupai-april-2026-v2";
  
     const SHARED_CATEGORIES = [
       {
